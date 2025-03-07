@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoVie MaTRiX - Movie Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --text-color: #ffffff;
+            --nav-bg: #1a1a1a;
+            --card-bg-start: #222;
+            --card-bg-end: #333;
+            --highlight-color: #f5c518;
+            --green-color: #00ff00;
+        }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: var(--nav-bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .navbar h1 {
+            margin: 0;
+            color: var(--green-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .search-bar {
+            background: var(--nav-bg);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--highlight-color);
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .filter-group label {
+            margin-bottom: 5px;
+        }
+        .filter-select, .year-input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--highlight-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            width: 150px;
+        }
+        .filter-btn {
+            padding: 8px 20px;
+            background: var(--green-color);
+            border: none;
+            border-radius: 5px;
+            color: var(--bg-color);
+            cursor: pointer;
+            transition: background 0.3s ease;
+            align-self: flex-end;
+        }
+        .filter-btn:hover {
+            background: #00cc00;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--highlight-color);
+        }
+        .movie-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+        .movie-card {
+            background: linear-gradient(135deg, var(--card-bg-start), var(--card-bg-end));
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            width: 200px;
+            transition: transform 0.3s ease;
+        }
+        .movie-card:hover {
+            transform: translateY(-10px);
+        }
+        .movie-card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .movie-card h3 {
+            margin: 10px 0 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .movie-card p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        #notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background: var(--green-color);
+            color: var(--bg-color);
+            border-radius: 5px;
+            display: none;
+        }
+        #notification.error {
+            background: #ff4444;
+        }
+        @media screen and (max-width: 768px) {
+            .search-bar {
+                padding: 10px;
+                gap: 10px;
+            }
+            .filter-select, .year-input {
+                width: 120px;
+            }
+            .movie-card {
+                width: 150px;
+            }
+        }
+    </style>
+    <script>
+        const API_KEY = "ad5191fc6d8bfc5c7112b1c06bbbbe2f";
+        const genres = {
+            28: "Action",
+            12: "Adventure",
+            16: "Animation",
+            35: "Comedy",
+            80: "Crime",
+            99: "Documentary",
+            18: "Drama",
+            10751: "Family",
+            14: "Fantasy",
+            36: "History",
+            27: "Horror",
+            10402: "Music",
+            9648: "Mystery",
+            10749: "Romance",
+            878: "Science Fiction",
+            10770: "TV Movie",
+            53: "Thriller",
+            10752: "War",
+            37: "Western"
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const genreSelect = document.getElementById("genre-select");
+            const startYear = document.getElementById("start-year");
+            const endYear = document.getElementById("end-year");
+            const filterBtn = document.getElementById("filter-btn");
+            const movieList = document.getElementById("movie-list");
+            const notification = document.getElementById("notification");
+
+            // Populate genre dropdown
+            Object.entries(genres).forEach(([id, name]) => {
+                const option = document.createElement("option");
+                option.value = id;
+                option.textContent = name;
+                genreSelect.appendChild(option);
+            });
+
+            function showNotification(message, isError = false) {
+                notification.textContent = message;
+                notification.className = `notification ${isError ? 'error' : ''}`;
+                notification.style.display = "block";
+                setTimeout(() => notification.style.display = "none", 3000);
+            }
+
+            async function fetchMovies(endpoint) {
+                let movies = [];
+                let page = 1;
+                const response = await fetch(`https://api.themoviedb.org/3/${endpoint}&page=${page}`);
+                if (!response.ok) throw new Error("API request failed");
+                const data = await response.json();
+                movies = data.results;
+                return movies.slice(0, 20); // Limit to 20 results
+            }
+
+            function displayMovies(movies) {
+                movieList.innerHTML = "";
+                if (movies.length === 0) {
+                    movieList.innerHTML = "<p>No movies found.</p>";
+                    return;
+                }
+                movies.forEach(movie => {
+                    const movieCard = document.createElement("div");
+                    movieCard.className = "movie-card";
+                    movieCard.innerHTML = `
+                        <img src="https://image.tmdb.org/t/p/w200${movie.poster_path || '/placeholder.jpg'}" alt="${movie.title}">
+                        <h3>${movie.title}</h3>
+                        <p>${movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}</p>
+                    `;
+                    movieList.appendChild(movieCard);
+                });
+            }
+
+            async function filterMovies() {
+                const genreId = genreSelect.value;
+                const start = startYear.value;
+                const end = endYear.value;
+
+                if (!genreId) {
+                    showNotification("Please select a genre", true);
+                    return;
+                }
+                if (!start || !end) {
+                    showNotification("Please enter both start and end years", true);
+                    return;
+                }
+                if (parseInt(start) > parseInt(end)) {
+                    showNotification("Start year must be less than end year", true);
+                    return;
+                }
+
+                const endpoint = `discover/movie?api_key=${API_KEY}&language=en-US&with_genres=${genreId}&primary_release_date.gte=${start}-01-01&primary_release_date.lte=${end}-12-31&sort_by=popularity.desc`;
+                try {
+                    const movies = await fetchMovies(endpoint);
+                    displayMovies(movies);
+                    showNotification(`Showing ${movies.length} ${genres[genreId]} movies from ${start} to ${end}`);
+                } catch (error) {
+                    showNotification("Error fetching movies", true);
+                    console.error(error);
+                }
+            }
+
+            filterBtn.addEventListener("click", filterMovies);
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <h1>MoVie <span style="color: var(--text-color);">MaTRiX</span></h1>
+        </nav>
+    </header>
+
+    <div class="search-bar">
+        <div class="filter-group">
+            <label for="genre-select">Genre</label>
+            <select id="genre-select" class="filter-select">
+                <option value="">Select Genre</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="start-year">Start Year</label>
+            <input type="number" id="start-year" class="year-input" placeholder="e.g., 2010" min="1900" max="2025">
+        </div>
+        <div class="filter-group">
+            <label for="end-year">End Year</label>
+            <input type="number" id="end-year" class="year-input" placeholder="e.g., 2020" min="1900" max="2025">
+        </div>
+        <button id="filter-btn" class="filter-btn">Search</button>
+    </div>
+
+    <main class="main-content">
+        <h2 class="section-title">Movie Results</h2>
+        <div id="movie-list" class="movie-list"></div>
+    </main>
+
+    <div id="notification" class="notification"></div>
+</body>
+</html>

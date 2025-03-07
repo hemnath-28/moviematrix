@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watchlist - MoVie MaTRiX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #0d0d0d;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background: #1a1a1a;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      color: #00ff00; /* Green for "MoVie" */
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-right: 20px;
+    }
+
+    .navbar ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar ul li {
+      margin: 0 15px;
+    }
+
+    .navbar ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .navbar ul li a:hover {
+      color: #f5c518;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 60px;
+      background: #1a1a1a;
+      padding: 10px 0;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .sidebar a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      color: #f5c518;
+    }
+
+    .sidebar .icon {
+      font-size: 1.5rem;
+    }
+
+    /* Main Container */
+    .main-container {
+      margin-left: 60px;
+      padding: 20px;
+      max-width: calc(100% - 60px);
+    }
+
+    .content .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #f5c518;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Watchlist Container */
+    #watchlist-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 25px;
+      padding: 10px 0;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    #watchlist-container .movie-card {
+      flex: 0 0 200px;
+      width: 200px;
+      min-width: 200px;
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    #watchlist-container .movie-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgba(245, 197, 24, 0.3);
+    }
+
+    #watchlist-container .movie-card img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    #watchlist-container .movie-card:hover img {
+      transform: scale(1.05);
+    }
+
+    #watchlist-container .movie-card h3 {
+      margin: 10px 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    #watchlist-container .movie-card button {
+      background: #f5c518;
+      border: none;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.3s ease;
+    }
+
+    #watchlist-container .movie-card button:hover {
+      background: #d4a00f;
+    }
+
+    #loading {
+      text-align: center;
+      color: #888;
+      display: none;
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .slide-up {
+      animation: slideUp 0.5s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .card-anim {
+      opacity: 0;
+      animation: cardFadeIn 0.3s ease-out forwards;
+    }
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+      .sidebar {
+        width: 50px;
+      }
+      .main-container {
+        margin-left: 50px;
+        padding: 15px;
+      }
+      #watchlist-container .movie-card {
+        flex: 0 0 150px;
+        width: 150px;
+        min-width: 150px;
+      }
+      #watchlist-container .movie-card img {
+        height: 225px;
+      }
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, deleteDoc, query, orderBy, limit, startAfter } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFPIFLvMLevd-re2YAtzpcXA4UB8FQyww",
+      authDomain: "imdb-recreation.firebaseapp.com",
+      projectId: "imdb-recreation",
+      storageBucket: "imdb-recreation.firebasestorage.app",
+      messagingSenderId: "289087143496",
+      appId: "1:289087143496:web:98bee0c456f3b41d6d627d",
+      measurementId: "G-LNEPHMMRXS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const watchlistContainer = document.getElementById("watchlist-container");
+      const signupLink = document.getElementById("signup-link");
+      const loginLink = document.getElementById("login-link");
+      const logoutBtn = document.getElementById("logout-btn");
+      const notification = document.getElementById("notification");
+      const loading = document.getElementById("loading");
+
+      let lastDoc = null;
+      let hasMore = true;
+
+      function showNotification(message, isError = false) {
+        notification.textContent = message;
+        notification.className = `notification ${isError ? 'error' : ''}`;
+        notification.style.display = "block";
+        setTimeout(() => notification.style.display = "none", 3000);
+      }
+
+      function showLoading(show = true) {
+        loading.style.display = show ? "block" : "none";
+      }
+
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          signupLink.style.display = "none";
+          loginLink.style.display = "none";
+          logoutBtn.style.display = "inline-block";
+          loadWatchlist(user.uid);
+        } else {
+          signupLink.style.display = "inline-block";
+          loginLink.style.display = "inline-block";
+          logoutBtn.style.display = "none";
+          watchlistContainer.innerHTML = "<p>Please log in to view your watchlist.</p>";
+          showNotification("Please log in.", true);
+        }
+      });
+
+      logoutBtn.addEventListener("click", () => {
+        signOut(auth)
+          .then(() => {
+            showNotification("Logged out");
+            window.location.reload();
+          })
+          .catch(error => {
+            showNotification("Logout failed: " + error.message, true);
+          });
+      });
+
+      async function loadWatchlist(userId, append = false) {
+        if (!hasMore && append) return;
+        try {
+          showLoading(true);
+          const watchlistRef = collection(db, "watchlists", userId, "movies");
+          let q = query(watchlistRef, orderBy("timestamp", "desc"), limit(10));
+          if (lastDoc && append) {
+            q = query(watchlistRef, orderBy("timestamp", "desc"), startAfter(lastDoc), limit(10));
+          }
+          const querySnapshot = await getDocs(q);
+          const watchlistItems = querySnapshot.docs.map(doc => doc.data());
+
+          if (querySnapshot.empty && !append) {
+            watchlistContainer.innerHTML = "<p>Your watchlist is empty.</p>";
+            showNotification("Watchlist is empty");
+            hasMore = false;
+          } else if (querySnapshot.empty && append) {
+            showNotification("No more movies.", true);
+            hasMore = false;
+          } else {
+            if (!append) watchlistContainer.innerHTML = "";
+            watchlistItems.forEach(movie => {
+              const movieCard = document.createElement("div");
+              movieCard.classList.add("movie-card", "card-anim");
+              movieCard.innerHTML = `
+                <img src="${movie.poster}" alt="${movie.title}">
+                <h3>${movie.title}</h3>
+                <button class="remove-btn" data-movie-id="${movie.movieId}">Remove</button>
+              `;
+              watchlistContainer.appendChild(movieCard);
+            });
+            lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+            hasMore = querySnapshot.docs.length === 10;
+            document.querySelectorAll(".remove-btn").forEach(btn => {
+              btn.addEventListener("click", async (e) => {
+                const movieId = e.target.getAttribute("data-movie-id");
+                try {
+                  await deleteDoc(doc(db, "watchlists", userId, "movies", movieId));
+                  showNotification("Movie removed");
+                  loadWatchlist(userId);
+                } catch (error) {
+                  showNotification("Failed to remove: " + error.message, true);
+                }
+              });
+            });
+            showNotification(append ? "Loaded more movies" : "Watchlist loaded");
+          }
+        } catch (error) {
+          watchlistContainer.innerHTML = `<p>Error: ${error.message}</p>`;
+          showNotification("Error loading: " + error.message, true);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      // Infinite scroll
+      watchlistContainer.addEventListener("scroll", () => {
+        const maxScrollLeft = watchlistContainer.scrollWidth - watchlistContainer.clientWidth;
+        if (watchlistContainer.scrollLeft >= maxScrollLeft - 50 && hasMore) {
+          const user = auth.currentUser;
+          if (user) loadWatchlist(user.uid, true);
+        }
+      });
+
+      // Initial load
+      if (auth.currentUser) loadWatchlist(auth.currentUser.uid);
+    });
+  </script>
+</head>
+<body class="fade-in">
+  <header>
+    <nav class="navbar">
+      <h1>MoVie <span style="color: #ffffff;">MaTRiX</span></h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#">Movies</a></li>
+        <li><a href="#">Series</a></li>
+        <li><a href="#">Popular</a></li>
+        <li><a href="#">Trends</a></li>
+        <li><a href="signup.html" id="signup-link">Sign Up</a></li>
+        <li><a href="login.html" id="login-link">Login</a></li>
+        <li><button id="logout-btn" style="display: none;">Logout</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <aside class="sidebar">
+    <a href="#" class="icon">🔍</a>
+    <a href="#" class="icon">🏠</a>
+    <a href="#" class="icon">👥</a>
+    <a href="#" class="icon">📺</a>
+    <a href="#" class="icon">⏳</a>
+    <a href="streaming.html" class="icon">🛒</a>
+  </aside>
+
+  <main class="main-container slide-up">
+    <section class="content">
+      <h2 class="section-title">Your Watchlist</h2>
+      <div id="watchlist-container"></div>
+      <div id="loading">Loading more movies...</div>
+    </section>
+  </main>
+
+  <div id="notification" class="notification"></div>
+
+  <footer>
+    <p>© 2025 IMDb Recreation. All rights reserved.</p>
+  </footer>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91ca81b4bd48454e',t:'MTc0MTM1NDg0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

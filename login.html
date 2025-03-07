@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - MoVie MaTRiX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      min-height: 100vh;
+      color: #fff;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .navbar {
+      padding: 1.5rem 2rem;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-box h1 {
+      color: #e50914;
+      font-size: 1.8rem;
+    }
+
+    .navbar ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .navbar a:hover {
+      color: #e50914;
+    }
+
+    .details-container {
+      max-width: 450px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      webkit-backdrop-filter: blur(10px);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #fff;
+    }
+
+    .tab-container {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background: #e50914;
+      transform: scale(1.05);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .form-container {
+      display: none;
+    }
+
+    .form-container.active {
+      display: block;
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    input {
+      width: 100%;
+      padding: 0.9rem;
+      margin: 0.8rem 0;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 10px rgba(229, 9, 20, 0.3);
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    .btn-anim {
+      width: 100%;
+      padding: 0.9rem;
+      margin: 1rem 0;
+      border: none;
+      border-radius: 8px;
+      background: #e50914;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-anim:hover {
+      background: #ff1a25;
+      transform: translateY(-2px);
+    }
+
+    .google-btn {
+      background: #fff;
+      color: #333;
+    }
+
+    .google-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .error-message {
+      color: #ff4444;
+      text-align: center;
+      min-height: 1.5rem;
+    }
+
+    #recaptcha-container {
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    #otp-section {
+      margin-top: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo-box"><h1>MoVie MaTRiX</h1></div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="signup.html">Sign Up</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="details-container">
+    <h2>Login to Your Account</h2>
+    <div class="tab-container">
+      <button class="tab-btn active" data-tab="email">Email</button>
+      <button class="tab-btn" data-tab="phone">Phone</button>
+      <button class="tab-btn" data-tab="google">Google</button>
+    </div>
+
+    <div id="email-form" class="form-container active">
+      <form id="email-login-form">
+        <input type="email" id="email" placeholder="Enter your email" required />
+        <input type="password" id="password" placeholder="Enter your password" required />
+        <button type="submit" class="btn-anim">Login with Email</button>
+      </form>
+      <p id="email-login-error" class="error-message"></p>
+    </div>
+
+    <div id="phone-form" class="form-container">
+      <form id="phone-login-form">
+        <input type="tel" id="phone-number" placeholder="Enter your phone number (e.g., +919876543210)" required />
+        <div id="recaptcha-container"></div>
+        <button type="submit" class="btn-anim">Send OTP</button>
+      </form>
+      <p id="phone-login-error" class="error-message"></p>
+      <div id="otp-section" style="display: none;">
+        <input type="text" id="otp" placeholder="Enter OTP" required />
+        <button id="verify-otp-btn" class="btn-anim">Verify OTP</button>
+      </div>
+    </div>
+
+    <div id="google-form" class="form-container">
+      <button id="google-login-btn" class="google-btn btn-anim">Login with Google</button>
+      <p id="google-login-error" class="error-message"></p>
+    </div>
+
+    <p style="text-align: center; margin-top: 1rem;">
+      Don't have an account? <a href="signup.html" style="color: #e50914;">Sign Up</a>
+    </p>
+  </main>
+  <footer>
+    <p>© 2025 IMDb Recreation. All rights reserved.</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      signInWithPhoneNumber, 
+      RecaptchaVerifier 
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFPIFLvMLevd-re2YAtzpcXA4UB8FQyww",
+      authDomain: "imdb-recreation.firebaseapp.com",
+      projectId: "imdb-recreation",
+      storageBucket: "imdb-recreation.firebasestorage.app",
+      messagingSenderId: "289087143496",
+      appId: "1:289087143496:web:98bee0c456f3b41d6d627d",
+      measurementId: "G-LNEPHMMRXS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab-btn');
+    const forms = document.querySelectorAll('.form-container');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        forms.forEach(f => f.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.getElementById(`${tab.dataset.tab}-form`).classList.add('active');
+      });
+    });
+
+    // Email login
+    document.getElementById("email-login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const errorMessage = document.getElementById("email-login-error");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "index.html";
+      } catch (error) {
+        errorMessage.textContent = error.message || "Login failed. Check your credentials.";
+      }
+    });
+
+    // Phone login with reCAPTCHA
+    const recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+      'size': 'normal',
+      'callback': () => {},
+      'expired-callback': () => {}
+    }, auth);
+    recaptchaVerifier.render();
+
+    let confirmationResult;
+    document.getElementById("phone-login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const phoneNumber = document.getElementById("phone-number").value;
+      const errorMessage = document.getElementById("phone-login-error");
+
+      try {
+        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+        document.getElementById("otp-section").style.display = "block";
+        errorMessage.textContent = "OTP sent to your phone.";
+      } catch (error) {
+        errorMessage.textContent = error.message || "Failed to send OTP.";
+        recaptchaVerifier.render();
+      }
+    });
+
+    document.getElementById("verify-otp-btn").addEventListener("click", async () => {
+      const otp = document.getElementById("otp").value;
+      const errorMessage = document.getElementById("phone-login-error");
+
+      try {
+        await confirmationResult.confirm(otp);
+        window.location.href = "index.html";
+      } catch (error) {
+        errorMessage.textContent = error.message || "Invalid OTP.";
+      }
+    });
+
+    // Google login
+    document.getElementById("google-login-btn").addEventListener("click", async () => {
+      const errorMessage = document.getElementById("google-login-error");
+      try {
+        await signInWithPopup(auth, googleProvider);
+        window.location.href = "index.html";
+      } catch (error) {
+        errorMessage.textContent = error.message || "Google login failed.";
+      }
+    });
+  </script>
+</body>
+</html>

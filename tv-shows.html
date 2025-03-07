@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Page - MoVie MaTRiX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-color: #0d0d0d;
+      --text-color: #ffffff;
+      --nav-bg: #1a1a1a;
+      --card-bg-start: #222;
+      --card-bg-end: #333;
+      --highlight-color: #f5c518;
+      --green-color: #00ff00;
+    }
+    
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+    
+    body.light-mode {
+      --bg-color: #f0f0f0;
+      --text-color: #333;
+      --nav-bg: #e0e0e0;
+      --card-bg-start: #ddd;
+      --card-bg-end: #eee;
+      --highlight-color: #d4a00f;
+      --green-color: #00cc00;
+    }
+    
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: var(--nav-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .navbar h1 {
+      margin: 0;
+      color: var(--green-color);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .navbar ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .navbar ul li {
+      margin: 0 15px;
+    }
+    
+    .navbar ul li a,
+    .navbar button {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .navbar ul li a:hover,
+    .navbar button:hover {
+      color: var(--highlight-color);
+    }
+    
+    .user-display {
+      margin-left: 20px;
+      font-size: 1rem;
+      color: var(--text-color);
+    }
+    
+    .theme-toggle {
+      font-size: 1.2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-color);
+    }
+    
+    .sidebar {
+      width: 60px;
+      background: var(--nav-bg);
+      padding: 10px 0;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .sidebar a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    
+    .sidebar a:hover {
+      color: var(--highlight-color);
+    }
+    
+    .main-container {
+      margin-left: 60px;
+      padding: 20px;
+      max-width: calc(100% - 60px);
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: var(--nav-bg);
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <header>
+    <nav class="navbar">
+      <div style="display: flex; align-items: center;">
+        <h1>MoVie <span style="color: var(--text-color);">MaTRiX</span></h1>
+        <span id="user-display" class="user-display" style="display: none;"></span>
+      </div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#">Movies</a></li>
+        <li><a href="#">Series</a></li>
+        <li><a href="#">Popular</a></li>
+        <li><a href="#">Trends</a></li>
+        <li><a href="signup.html" id="signup-link">Sign Up</a></li>
+        <li><a href="login.html" id="login-link">Login</a></li>
+        <li><button id="logout-btn" style="display: none;">Logout</button></li>
+        <li><button id="theme-toggle" class="theme-toggle">🌙</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <aside class="sidebar">
+    <a href="filter.html" class="icon" title="search">🔍</a>
+    <a href="#" class="icon" title="home">🏠</a>
+    <a href="#" class="icon" title="community">👥</a>
+    <a href="#" class="icon" title="Tv-shows">📺</a>
+    <a href="watchlist.html" class="icon" title="watchlist">⏳</a>
+    <a href="streaming.html" class="icon" title="streaming">🛒</a>
+  </aside>
+
+  <main class="main-container slide-up">
+    <!-- Middle content is intentionally left empty -->
+  </main>
+
+  <footer>
+    <p>© 2025 IMDb Recreation.</p>
+  </footer>
+
+  <script type="module">
+    // Minimal script for theme toggle functionality.
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      themeToggle.textContent = document.body.classList.contains("light-mode") ? "☀️" : "🌙";
+    });
+  </script>
+</body>
+</html>

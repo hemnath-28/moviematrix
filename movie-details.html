@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoVie MaTRiX - Movie Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #0d0d0d;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background: #1a1a1a;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      color: #00ff00; /* Green for "MoVie" */
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-right: 20px;
+    }
+
+    .navbar ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar ul li {
+      margin: 0 15px;
+    }
+
+    .navbar ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .navbar ul li a:hover {
+      color: #f5c518;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 60px;
+      background: #1a1a1a;
+      padding: 10px 0;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .sidebar a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      color: #f5c518;
+    }
+
+    .sidebar .icon {
+      font-size: 1.5rem;
+    }
+
+    /* Main Container */
+    .main-container {
+      margin-left: 60px;
+      padding: 20px;
+      max-width: calc(100% - 60px);
+    }
+
+    .details-container {
+      background: linear-gradient(135deg, #222, #333);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .content .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #f5c518;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .movie-detail-flex {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .details-left, .details-right {
+      flex: 1;
+    }
+
+    .details-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .details-left img {
+      width: 300px;
+      height: auto;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .details-left img:hover {
+      transform: scale(1.05);
+    }
+
+    .trailer-container {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .trailer-container iframe {
+      width: 700px;
+      height: 400px;
+      border: none;
+      border-radius: 8px;
+      margin-left: 0;
+    }
+
+    #watch-trailer-btn {
+      padding: 20px 40px;
+      font-size: 1.4rem;
+      background: linear-gradient(45deg, #ff4b1f, #ff9068);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 300px;
+      transition: transform 0.3s ease;
+    }
+
+    #watch-trailer-btn:hover {
+      transform: scale(1.05);
+    }
+
+    #rating-section {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #star-rating .star {
+      font-size: 2rem;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s;
+      margin: 0 5px;
+    }
+
+    #star-rating .star.filled {
+      color: #f5c518;
+    }
+
+    #submit-rating-btn {
+      padding: 10px 20px;
+      background: #28a745;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    #submit-rating-btn:hover {
+      transform: scale(1.05);
+    }
+
+    #average-rating {
+      margin-top: 10px;
+      color: #f5c518;
+      font-weight: 600;
+    }
+
+    .cast-list, .crew-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+    }
+
+    .cast-item, .crew-item {
+      flex: 0 0 calc(33.33% - 10px);
+      max-width: calc(33.33% - 10px);
+      text-align: center;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .cast-item:hover, .crew-item:hover {
+      transform: scale(1.05);
+    }
+
+    .cast-item img, .crew-item img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin: 0 auto;
+      transition: transform 0.3s ease;
+    }
+
+    .cast-item:hover img, .crew-item:hover img {
+      transform: scale(1.1);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #222, #333);
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 600px;
+      color: #ffffff;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #f5c518;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #d4a00f;
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .slide-up {
+      animation: slideUp 0.5s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .card-anim {
+      opacity: 0;
+      animation: cardFadeIn 0.3s ease-out forwards;
+    }
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+      .sidebar {
+        width: 50px;
+      }
+      .main-container {
+        margin-left: 50px;
+        padding: 15px;
+      }
+      .details-left img {
+        width: 200px;
+      }
+      .trailer-container iframe {
+        width: 100%;
+        height: 200px;
+        margin-left: 0;
+      }
+      .cast-item, .crew-item {
+        flex: 0 0 calc(50% - 10px);
+        max-width: calc(50% - 10px);
+      }
+      .cast-item img, .crew-item img {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFPIFLvMLevd-re2YAtzpcXA4UB8FQyww",
+      authDomain: "imdb-recreation.firebaseapp.com",
+      projectId: "imdb-recreation",
+      storageBucket: "imdb-recreation.firebasestorage.app",
+      messagingSenderId: "289087143496",
+      appId: "1:289087143496:web:98bee0c456f3b41d6d627d",
+      measurementId: "G-LNEPHMMRXS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const API_KEY = "ad5191fc6d8bfc5c7112b1c06bbbbe2f";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const movieDetails = document.getElementById("movie-details");
+      if (!movieDetails) {
+        console.error("movie-details element not found in DOM");
+        return;
+      }
+
+      const signupLink = document.getElementById("signup-link");
+      const loginLink = document.getElementById("login-link");
+      const logoutBtn = document.getElementById("logout-btn");
+      const notification = document.getElementById("notification");
+      const userStatus = document.getElementById("user-status");
+      const personModal = document.getElementById("person-modal");
+      const personModalContent = document.getElementById("person-modal-content");
+      const closePersonModal = document.getElementById("close-person-modal");
+
+      function showNotification(message, isError = false) {
+        notification.textContent = message;
+        notification.className = `notification ${isError ? 'error' : ''}`;
+        notification.style.display = "block";
+        setTimeout(() => notification.style.display = "none", 3000);
+        console.log(`${isError ? 'Error' : 'Info'}: ${message}`);
+      }
+
+      onAuthStateChanged(auth, user => {
+        console.log("Auth state changed:", user ? "User logged in" : "No user");
+        if (user) {
+          userStatus.textContent = `Welcome, ${user.email}`;
+          signupLink.style.display = "none";
+          loginLink.style.display = "none";
+          logoutBtn.style.display = "inline-block";
+          const ratingSection = document.getElementById("rating-section");
+          if (ratingSection) {
+            ratingSection.style.display = "block";
+            console.log("Rating section shown for logged-in user");
+          } else {
+            console.error("Rating section not found during auth change");
+          }
+        } else {
+          userStatus.textContent = "Not logged in";
+          signupLink.style.display = "inline-block";
+          loginLink.style.display = "inline-block";
+          logoutBtn.style.display = "none";
+          const ratingSection = document.getElementById("rating-section");
+          if (ratingSection) {
+            ratingSection.style.display = "none";
+            console.log("Rating section hidden for logged-out user");
+          } else {
+            console.error("Rating section not found during auth change");
+          }
+        }
+      });
+
+      logoutBtn.addEventListener("click", () => signOut(auth).then(() => window.location.reload()));
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const movieId = urlParams.get("movieId");
+      console.log("Movie ID from URL:", movieId);
+      if (!movieId) {
+        movieDetails.innerHTML = "<p>No movie selected. Please provide a movie ID in the URL.</p>";
+        showNotification("No movie ID provided in URL", true);
+        return;
+      }
+
+      let selectedRating = 0;
+
+      async function loadMovieDetails() {
+        try {
+          console.log("Fetching movie details for movieId:", movieId);
+          const detailsResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=en-US`);
+          if (!detailsResponse.ok) {
+            throw new Error(`TMDB API error: ${detailsResponse.status} - ${detailsResponse.statusText}`);
+          }
+          const details = await detailsResponse.json();
+          console.log("Movie details fetched:", details);
+
+          console.log("Fetching movie credits for movieId:", movieId);
+          const creditsResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${API_KEY}`);
+          if (!creditsResponse.ok) {
+            throw new Error(`TMDB Credits API error: ${creditsResponse.status} - ${creditsResponse.statusText}`);
+          }
+          const credits = await creditsResponse.json();
+          console.log("Movie credits fetched:", credits);
+
+          movieDetails.innerHTML = `
+            <h2>${details.title}</h2>
+            <div class="movie-detail-flex">
+              <div class="details-left card-anim">
+                <img src="https://image.tmdb.org/t/p/w300${details.poster_path || '/placeholder.jpg'}" alt="${details.title}">
+                <p><strong>Rating:</strong> ${details.vote_average} / 10 (${details.vote_count} votes)</p>
+                <p><strong>Runtime:</strong> ${details.runtime} minutes</p>
+                <p><strong>Overview:</strong> ${details.overview}</p>
+                <button id="add-to-watchlist-btn" class="btn-anim">Add to Watchlist</button>
+                <div id="rating-section">
+                  <h3>Rate this movie:</h3>
+                  <div id="star-rating">
+                    <span data-value="1" class="star">☆</span>
+                    <span data-value="2" class="star">☆</span>
+                    <span data-value="3" class="star">☆</span>
+                    <span data-value="4" class="star">☆</span>
+                    <span data-value="5" class="star">☆</span>
+                  </div>
+                  <button id="submit-rating-btn" class="btn-anim">Submit Rating</button>
+                  <p id="average-rating">Average Rating: Loading...</p>
+                </div>
+              </div>
+              <div class="details-right card-anim">
+                <button id="watch-trailer-btn" class="btn-anim">Watch Trailer</button>
+                <div class="trailer-container" id="trailer-container"></div>
+              </div>
+            </div>
+            <h3>Cast</h3>
+            <div class="cast-list">${credits.cast.filter(actor => actor.profile_path).slice(0, 18).map(actor => `<div class="cast-item card-anim" data-person-id="${actor.id}"><img src="https://image.tmdb.org/t/p/w200${actor.profile_path}" alt="${actor.name}"><p>${actor.name}<br><small>as ${actor.character}</small></p></div>`).join('')}</div>
+            <h3>Crew</h3>
+            <div class="crew-list">${credits.crew.filter(member => member.profile_path).slice(0, 10).map(member => `<div class="crew-item card-anim" data-person-id="${member.id}"><img src="https://image.tmdb.org/t/p/w200${member.profile_path}" alt="${member.name}"><p>${member.name}<br><small>${member.job}</small></p></div>`).join('')}</div>
+          `;
+
+          console.log("Movie details HTML inserted");
+
+          const addToWatchlistBtn = document.getElementById("add-to-watchlist-btn");
+          const watchTrailerBtn = document.getElementById("watch-trailer-btn");
+          const submitRatingBtn = document.getElementById("submit-rating-btn");
+
+          if (addToWatchlistBtn) {
+            addToWatchlistBtn.addEventListener("click", () => handleAddToWatchlist(movieId, details.title, `https://image.tmdb.org/t/p/w200${details.poster_path}`));
+          } else {
+            console.error("add-to-watchlist-btn not found");
+          }
+
+          if (watchTrailerBtn) {
+            watchTrailerBtn.addEventListener("click", () => loadMovieTrailer(movieId));
+          } else {
+            console.error("watch-trailer-btn not found");
+          }
+
+          if (submitRatingBtn) {
+            document.querySelectorAll("#star-rating .star").forEach(star => {
+              star.addEventListener("click", () => {
+                selectedRating = parseInt(star.getAttribute("data-value"));
+                document.querySelectorAll("#star-rating .star").forEach(s => {
+                  s.classList.toggle("filled", parseInt(s.getAttribute("data-value")) <= selectedRating);
+                  s.innerHTML = parseInt(s.getAttribute("data-value")) <= selectedRating ? "★" : "☆";
+                });
+              });
+            });
+
+            submitRatingBtn.addEventListener("click", async () => {
+              if (selectedRating === 0) return showNotification("Please select a star rating.", true);
+              if (!auth.currentUser) return showNotification("Please log in to rate.", true);
+              try {
+                await setDoc(doc(db, "ratings", auth.currentUser.uid, "movies", String(movieId)), { 
+                  movieId, 
+                  rating: selectedRating, 
+                  timestamp: new Date() 
+                });
+                showNotification("Thank you for rating the movie!");
+                updateAverageRating(movieId);
+              } catch (error) {
+                showNotification("Failed to submit rating: " + error.message, true);
+                console.error("Error submitting rating:", error);
+              }
+            });
+          } else {
+            console.error("submit-rating-btn not found");
+          }
+
+          const ratingSection = document.getElementById("rating-section");
+          if (ratingSection) {
+            console.log("Rating section found in DOM");
+            if (auth.currentUser) {
+              ratingSection.style.display = "block";
+              console.log("Rating section set to visible");
+            } else {
+              ratingSection.style.display = "none";
+              console.log("Rating section set to hidden");
+            }
+          } else {
+            console.error("Rating section not found after DOM insertion");
+          }
+
+          document.querySelectorAll(".cast-item, .crew-item").forEach(item => {
+            item.addEventListener("click", () => showPersonUpcomingMovies(item.getAttribute("data-person-id")));
+          });
+
+          updateAverageRating(movieId);
+        } catch (error) {
+          movieDetails.innerHTML = `<p>Error loading movie details: ${error.message}</p>`;
+          showNotification("Failed to load movie details: " + error.message, true);
+          console.error("Error loading movie details:", error);
+        }
+      }
+
+      async function loadMovieTrailer(movieId) {
+        try {
+          console.log("Fetching trailer for movieId:", movieId);
+          const data = await (await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`)).json();
+          console.log("Trailer data:", data);
+          const trailers = data.results.filter(video => video.type === "Trailer" && video.site === "YouTube");
+          const trailerContainer = document.getElementById("trailer-container");
+          if (trailerContainer) {
+            trailerContainer.innerHTML = trailers.length > 0 ? `<iframe src="https://www.youtube.com/embed/${trailers[0].key}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="card-anim"></iframe>` : `<p>No trailer available.</p>`;
+            trailerContainer.style.display = "block";
+          }
+        } catch (error) {
+          showNotification("Failed to load trailer: " + error.message, true);
+          console.error("Error loading trailer:", error);
+        }
+      }
+
+      async function handleAddToWatchlist(movieId, title, poster) {
+        const user = auth.currentUser;
+        if (!user) return showNotification("Please log in to add to watchlist.", true);
+        try {
+          console.log("Adding to watchlist:", { movieId, title, poster });
+          await setDoc(doc(db, "watchlists", user.uid, "movies", String(movieId)), { movieId, title, poster, timestamp: new Date() });
+          showNotification("Movie added to watchlist");
+        } catch (error) {
+          showNotification("Failed to add to watchlist: " + error.message, true);
+          console.error("Error adding to watchlist:", error);
+        }
+      }
+
+      async function showPersonUpcomingMovies(personId) {
+        try {
+          console.log("Fetching upcoming movies for personId:", personId);
+          const data = await (await fetch(`https://api.themoviedb.org/3/person/${personId}/movie_credits?api_key=${API_KEY}&language=en-US`)).json();
+          console.log("Person credits:", data);
+          const upcomingMovies = data.cast.filter(movie => movie.release_date && new Date(movie.release_date) > new Date());
+          personModalContent.innerHTML = `<h3>Upcoming Movies</h3>${upcomingMovies.length > 0 ? `<ul>${upcomingMovies.slice(0, 5).map(movie => `<li>${movie.title} (${movie.release_date})</li>`).join('')}</ul>` : `<p>No upcoming movies found.</p>`}`;
+          personModal.style.display = "block";
+        } catch (error) {
+          showNotification("Failed to load upcoming movies: " + error.message, true);
+          console.error("Error loading person upcoming movies:", error);
+        }
+      }
+
+      async function updateAverageRating(movieId) {
+        const averageRatingElement = document.getElementById("average-rating");
+        if (!averageRatingElement) {
+          console.error("average-rating element not found");
+          return;
+        }
+        try {
+          console.log("Fetching ratings for movieId:", movieId);
+          const ratingsRef = collection(db, "ratings");
+          const snapshot = await getDocs(ratingsRef);
+          const ratings = snapshot.docs
+            .map(doc => doc.data())
+            .flatMap(user => Object.values(user).filter(rating => rating.movieId === String(movieId)))
+            .map(rating => rating.rating);
+
+          console.log("Ratings found:", ratings);
+          if (ratings.length === 0) {
+            averageRatingElement.textContent = "Average Rating: No ratings yet";
+          } else {
+            const average = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+            averageRatingElement.textContent = `Average Rating: ${average.toFixed(1)} / 5 (${ratings.length} votes)`;
+          }
+        } catch (error) {
+          averageRatingElement.textContent = `Average Rating: Error - ${error.message}`;
+          showNotification("Failed to load average rating: " + error.message, true);
+          console.error("Error calculating average rating:", error);
+        }
+      }
+
+      closePersonModal.addEventListener("click", () => personModal.style.display = "none");
+      window.addEventListener("click", (e) => { if (e.target === personModal) personModal.style.display = "none"; });
+
+      loadMovieDetails();
+    });
+  </script>
+</head>
+<body class="fade-in">
+  <header>
+    <nav class="navbar">
+      <h1>MoVie <span style="color: #ffffff;">MaTRiX</span></h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="watchlist.html">Watchlist</a></li>
+        <li><a href="index.html#upcoming-section">Upcoming</a></li>
+        <li><a href="signup.html" id="signup-link">Sign Up</a></li>
+        <li><a href="login.html" id="login-link">Login</a></li>
+        <li><button id="logout-btn" style="display: none;">Logout</button></li>
+      </ul>
+      <p id="user-status">Checking user...</p>
+    </nav>
+  </header>
+
+  <aside class="sidebar">
+    <a href="#" class="icon">🔍</a>
+    <a href="#" class="icon">🏠</a>
+    <a href="#" class="icon">👥</a>
+    <a href="#" class="icon">📺</a>
+    <a href="#" class="icon">⏳</a>
+    <a href="streaming.html" class="icon">🛒</a>
+  </aside>
+
+  <main class="main-container slide-up">
+    <div class="details-container">
+      <div id="movie-details"></div>
+    </div>
+  </main>
+
+  <div id="person-modal" class="modal">
+    <div class="modal-content card-anim">
+      <span id="close-person-modal" class="close">×</span>
+      <div id="person-modal-content"></div>
+    </div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <footer>
+    <p>© 2025 IMDb Recreation. All rights reserved.</p>
+  </footer>
+</body>
+</html>
