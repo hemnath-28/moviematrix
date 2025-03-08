@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MoVie MaTRiX - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="img1.webp" height="120px">
     <style>
         :root {
             --bg-color: #0d0d0d;
@@ -14,6 +15,7 @@
             --card-bg-end: #333;
             --highlight-color: #f5c518;
             --green-color: #00ff00;
+            --watchlist-color: #ff6200; /* Added orange color for watchlist */
         }
 
         body {
@@ -34,6 +36,7 @@
             --card-bg-end: #eee;
             --highlight-color: #d4a00f;
             --green-color: #00cc00;
+            --watchlist-color: #e65a00; /* Lighter orange for light mode */
         }
 
         .navbar {
@@ -63,6 +66,38 @@
 
         .navbar ul li {
             margin: 0 15px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: greenyellow;
+            min-width: 120px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--highlight-color);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
         }
 
         .navbar ul li a, .navbar button {
@@ -163,7 +198,7 @@
         }
 
         #search-results {
-            display: block; /* Controlled by JS, initially hidden */
+            display: block;
         }
 
         #search-results .horizontal-list {
@@ -186,6 +221,9 @@
             flex: 0 0 200px;
             width: 200px;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .movie-card:hover {
@@ -242,6 +280,23 @@
             margin: 5px 0 0;
             font-size: 0.9rem;
             color: var(--highlight-color);
+        }
+
+        .btn-anim {
+            background: var(--watchlist-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s ease, transform 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-anim:hover {
+            background: #e65a00;
+            transform: scale(1.05);
         }
 
         .compare-btn {
@@ -352,7 +407,6 @@
             .movie-card, .grossing-item { flex: 0 0 150px; width: 150px; }
             .movie-card img, .grossing-item img { height: 225px; }
             .search-input { width: 200px; }
-            
         }
     </style>
     <script type="module">
@@ -379,7 +433,6 @@
         document.addEventListener("DOMContentLoaded", async () => {
             const topRatedList = document.getElementById("top-rated-list");
             const topGrossingList = document.getElementById("top-grossing-list");
-            const allMoviesList = document.getElementById("all-movies-list");
             const topGrossingListThisMonth = document.getElementById("top-grossing-list-this-month");
             const upcomingList = document.getElementById("upcoming-list");
             const compareModal = document.getElementById("compare-modal");
@@ -583,15 +636,11 @@
             }
 
             async function loadTopRatedMovies() {
-                displayMovies(await fetchMovies("movie/top_rated?api_key=" + API_KEY + "&language=en-US", 200), topRatedList);
+                displayMovies(await fetchMovies("movie/top_rated?api_key=" + API_KEY + "&language=en-US", 50), topRatedList);
             }
 
             async function loadTopGrossingMovies() {
-                displayMovies(await fetchMovies("movie/popular?api_key=" + API_KEY + "&language=en-US", 200), topGrossingList);
-            }
-
-            async function loadAllMovies() {
-                displayMovies(await fetchMovies("movie/now_playing?api_key=" + API_KEY + "&language=en-US", 200), allMoviesList);
+                displayMovies(await fetchMovies("movie/popular?api_key=" + API_KEY + "&language=en-US", 50), topGrossingList);
             }
 
             async function handleAddToWatchlist(movieId, title, poster) {
@@ -603,7 +652,6 @@
 
             loadTopRatedMovies();
             loadTopGrossingMovies();
-            loadAllMovies();
             loadTopGrossingThisMonth();
             loadUpcomingMovies();
         });
@@ -634,12 +682,19 @@
         <a href="filter.html" class="icon" title="search">🔍</a>
         <a href="#" class="icon" title="home">🏠</a>
         <a href="#" class="icon" title="community">👥</a>
+        <div class="dropdown">
+            <a href="#" class="icon" title="events">👻</a>
+            <div class="dropdown-content">
+                <a href="event1.html">Event 1</a>
+                <a href="event2.html">Event 2</a>
+                <a href="event3.html">Event 3</a>
+            </div>
+        </div>
         <a href="tv-shows.html" class="icon" title="Tv-shows">📺</a>
         <a href="watchlist.html" class="icon" title="watchlist">⏳</a>
         <a href="streaming.html" class="icon" title="streaming">🛒</a>
         <a href="#" class="icon" title="celeberity-news">📰</a>
-        <a href="#" class="icon" title="anime">👻</a>
-        <a href="#" class="icon" title="movies">🍿🎬</a>
+        <a href="movies.html" class="icon" title="movies">🍿🎬</a>
     </aside>
 
     <div class="search-container">
@@ -656,7 +711,7 @@
                 <h2 class="section-title">Top Highest Grossing This Month</h2>
                 <div id="top-grossing-list-this-month" class="grossing-list"></div>
             </div>
-            <div class="horizontal-section" id="upcoming-section"></div>
+            <div class="horizontal-section" id="upcoming-section">
                 <h2 class="section-title">Upcoming Movies</h2>
                 <div id="upcoming-list" class="horizontal-list"></div>
             </div>
@@ -668,11 +723,6 @@
                 <h2 class="section-title">Top Grossing Movies</h2>
                 <div id="top-grossing-list" class="horizontal-list"></div>
             </div>
-            <div class="horizontal-section">
-                <h2 class="section-title">All Movies</h2>
-                <div id="all-movies-list" class="horizontal-list"></div>
-            </div>
-            
         </section>
     </main>
 
@@ -683,8 +733,8 @@
         </div>
     </div>
 
-    <footer>
+    <footer align="center">
         <p>© 2025 IMDb Recreation.</p>
     </footer>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91ca81b4bf03bfd3',t:'MTc0MTM1NDg0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91ca81b4bf03bfd3',t:'MTc0MTM1NDg0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91d183d08afe4514',t:'MTc0MTQyODMzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
