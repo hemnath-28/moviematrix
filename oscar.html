@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Page - MoVie MaTRiX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-color: #0d0d0d;
+      --text-color: #ffffff;
+      --nav-bg: #1a1a1a;
+      --card-bg-start: #222;
+      --card-bg-end: #333;
+      --highlight-color: #f5c518;
+      --green-color: #00ff00;
+    }
+    
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+    
+    body.light-mode {
+      --bg-color: #f0f0f0;
+      --text-color: #333;
+      --nav-bg: #e0e0e0;
+      --card-bg-start: #ddd;
+      --card-bg-end: #eee;
+      --highlight-color: #d4a00f;
+      --green-color: #00cc00;
+    }
+    
+    /* New Oscars Navigation Header */
+    .oscars-header {
+      background: linear-gradient(to right, #000000 0%, #1a1a1a 100%);
+      background-image: url('image.png'); /* Replace with the path to your background pattern if needed */
+      background-size: cover;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .oscars-header h1 {
+      margin: 0;
+      font-size: 40px;
+      letter-spacing: 5px;
+    }
+    
+    .oscars-header nav {
+      margin-top: 15px;
+    }
+    
+    .oscars-header nav a {
+      margin: 0 20px;
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
+      border-bottom: 3px solid transparent;
+      padding-bottom: 5px;
+    }
+    
+    .oscars-header nav a:hover,
+    .oscars-header nav a.active {
+      border-bottom: 3px solid yellow;
+    }
+    
+    /* Existing Styles */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: var(--nav-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .navbar h1 {
+      margin: 0;
+      color: var(--green-color);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .navbar ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .navbar ul li {
+      margin: 0 15px;
+    }
+    
+    .navbar ul li a,
+    .navbar button {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .navbar ul li a:hover,
+    .navbar button:hover {
+      color: var(--highlight-color);
+    }
+    
+    .theme-toggle {
+      font-size: 1.2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-color);
+    }
+    
+    .sidebar {
+      width: 60px;
+      background: var(--nav-bg);
+      padding: 10px 0;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .sidebar a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.2rem;
+    }
+    
+    .sidebar a:hover {
+      color: var(--highlight-color);
+    }
+    
+    .main-container {
+      margin-left: 60px;
+      padding: 20px;
+      max-width: calc(100% - 60px);
+    }
+    
+    .video-section, .winners-section, .red-carpet-section, .photos-we-love-section {
+      background-color: var(--card-bg-start);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      color: var(--text-color);
+    }
+    
+    .section-title {
+      color: var(--highlight-color);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .video-grid, .winners-grid, .red-carpet-grid, .photos-we-love-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    
+    .video-card, .winner-card, .red-carpet-card, .photos-we-love-card {
+      background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end));
+      border-radius: 10px;
+      overflow: hidden;
+      text-align: center;
+      padding: 10px;
+      color: var(--text-color);
+    }
+    
+    .video-card iframe, .winner-card img, .red-carpet-card img, .photos-we-love-card img {
+      width: 80%;
+      height: 80%;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    
+    .video-card p, .winner-card p, .red-carpet-card p, .photos-we-love-card p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    
+    .likes {
+      color: var(--green-color);
+      font-size: 12px;
+    }
+    
+    a.see-list {
+      color: var(--highlight-color);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: var(--nav-bg);
+    }
+  </style>
+</head>
+<body>
+  <!-- New Oscars Navigation Header -->
+  
+
+  <!-- Existing Header and Navigation -->
+  <header>
+    <nav class="navbar">
+      <h1>MoVie <span style="color: var(--text-color);">MaTRiX</span></h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#">Movies</a></li>
+        <li><a href="#">Series</a></li>
+        <li><a href="#">Popular</a></li>
+        <li><a href="#">Trends</a></li>
+        <li><a href="signup.html">Sign Up</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><button class="theme-toggle" id="theme-toggle">🌙</button></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="oscars-header">
+    <h1>OSCARS</h1>
+    <nav>
+      <a href="oscar.html" class="active">OSCARS HOME</a>
+      <a href="winners.html">WINNERS</a>
+    </nav>
+  </div>
+
+  <aside class="sidebar">
+    <a href="filter.html" title="Search">🔍</a>
+    <a href="#" title="Home">🏠</a>
+    <a href="#" title="Community">👥</a>
+    <a href="#" title="TV Shows">📺</a>
+    <a href="watchlist.html" title="Watchlist">⏳</a>
+    <a href="streaming.html" title="Streaming">🛒</a>
+  </aside>
+
+  <main class="main-container">
+    <div class="video-section">
+      <div class="section-title">| 2025 Oscars Videos</div>
+      <p>Interviews, clips, and more</p>
+      <div class="video-grid">
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/NFDunCVoB1s?start=10" frameborder="0" allowfullscreen></iframe>
+          <p>Best Moments From the 2025 Oscars</p>
+          <p>Clip 2:06</p>
+          <p class="likes">👍 375 ❤ 190</p>
+        </div>
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/g-d89fwdW3c?start=0" frameborder="0" allowfullscreen></iframe>
+          <p>Career Check-in With 'Anora' Star Mike...</p>
+          <p>Clip 6:57</p>
+          <p class="likes">👍 438 ❤ 281</p>
+        </div>
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/l9D2z-PMFtc" frameborder="0" allowfullscreen></iframe>
+          <p>What You Need to Know About I'm Still Here</p>
+          <p>Clip 1:36</p>
+          <p class="likes">👍 450 ❤ 414</p>
+        </div>
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/Way9Dexny3w?start=0" frameborder="0" allowfullscreen></iframe>
+          <p>Who From 'Dune' Part Two...</p>
+          <p>Clip 3:52</p>
+          <p class="likes">👍 58 ❤ 34</p>
+        </div>
+        <div class="video-card">
+          <iframe src="https://www.youtube.com/embed/LNlrGhBpYjc?start=0" frameborder="0" allowfullscreen></iframe>
+          <p>Demi Moore Through the Years</p>
+          <p>Clip 9:57</p>
+          <p class="likes">👍 221 ❤ 118</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="winners-section">
+      <div class="section-title">| 2025 Academy Award Winners</div>
+      <p>See the full list of nominees and winners for the 2025 Academy Awards.</p>
+      <a href="https://www.imdb.com/oscars/event/ev0000003/2025/1/#oscar_best_achievement_in_production_design" target="_blank" class="see-list">See the list</a>
+      <div class="winners-grid">
+        <div class="winner-card">
+          <img src="https://drive.google.com/thumbnail?id=1LH1sIoWp2mv2WmZehtZ20RRr4GblTRmR" alt="Anora">
+          <p>Anora</p>
+        </div>
+        <div class="winner-card">
+          <img src="https://drive.google.com/thumbnail?id=12yHjoPXC11Kni7vO6zIMpXqi5_vs9BAr" alt="The Brutalist">
+          <p>The Brutalist</p>
+        </div>
+        <div class="winner-card">
+          <img src="https://drive.google.com/thumbnail?id=1Sho4pHkFtXdiofAWJ9hvgCnbN6BUhhiz" alt="Dune">
+          <p>Dune</p>
+        </div>
+      </div>
+    </div>
+    <div class="red-carpet-section">
+      <div class="section-title">| 2025 Oscars Red Carpet</div>
+      <p>Who was the best dressed on the red carpet? Decide for yourself with our photos of all the biggest stars from the 2025 Academy Awards!</p>
+      <a href="https://www.imdb.com/oscars/2025-oscars-red-carpet/rg4042430464/mediaviewer/rm2386004738?ref_=fea_acd_csegosc_25rc_i" class="see-list">See the gallery</a>
+      <div class="red-carpet-grid">
+        <div class="red-carpet-card">
+          <img src="https://www.koimoi.com/wp-content/new-galleries/2025/03/oscars-2025-anoras-mikey-madison-becomes-16th-actress-to-win-for-portraying-a-prostitute-joining-anne-hathaway-emma-stone-charlize-therons-club-1068x561.jpg" alt="Celebrity 1">
+          <p>Mikey Madison</p>
+        </div>
+        <div class="red-carpet-card">
+          <img src="https://m.media-amazon.com/images/M/MV5BYTRhNDBlYjctMWE4NS00YWQzLTg4NGQtNGMwM2VmZDlmYjdkXkEyXkFqcGc@.V1_QL75_UX543.jpg" alt="Penélope Cruz">
+          <p>Penélope Cruz</p>
+        </div>
+        <div class="red-carpet-card">
+          <img src="https://m.media-amazon.com/images/M/MV5BYjZhZmI1ZDgtNDY0NC00OTI0LThlZmUtYTY4YjJhYjMwY2FmXkEyXkFqcGc@.V1_QL75_UX271.5.jpg" alt="Andrew Garfield">
+          <p>Andrew Garfield</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="photos-we-love-section">
+      <div class="section-title">| 2025 Oscars: Photos We Love</div>
+      <p>Check out all of our favorite 2025 Academy Awards moments, from behind-the-scenes, telecast, press room, and more.</p>
+      <a href="https://www.imdb.com/oscars/2025-oscars-photos-we-love/rg4294088704/mediaviewer/rm1798474498" class="see-list">See the gallery</a>
+      <div class="photos-we-love-grid">
+        <div class="photos-we-love-card">
+          <img src="https://m.media-amazon.com/images/M/MV5BOTk0ZTFiNDUtMGNkYi00ZWFjLTkyN2ItNmNhOTgyMjYxMWUwXkEyXkFqcGc@.V1_QL75_UX1230.jpg" alt="award winners">
+          <p>Award Winners</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 IMDb Recreation.</p>
+  </footer>
+
+  <script type="module">
+    // Minimal script for theme toggle functionality.
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      themeToggle.textContent = document.body.classList.contains("light-mode") ? "☀" : "🌙";
+    });
+  </script>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91f3ab5bac65dd25',t:'MTc0MTc4NjQ2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9216233e1931b0e7',t:'MTc0MjE0Nzg5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9235b4e509e9bfe3',t:'MTc0MjQ3ODkyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

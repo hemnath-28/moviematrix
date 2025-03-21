@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academy Award Winners - MoVie MaTRiX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-color: #000000; /* Pure black background */
+      --text-color: #ffffff;
+      --nav-bg: #1a1a1a;
+      --card-bg-start: #222;
+      --card-bg-end: #333;
+      --highlight-color: #f5c518;
+      --green-color: #00ff00;
+    }
+    /* Global body styles */
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+    /* Oscars Header with background image */
+    .oscars-header {
+      background: linear-gradient(to right, #000000 0%, #1a1a1a 100%);
+      background-image: url('image.png'); /* Ensure this image path is correct */
+      background-size: cover;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .oscars-header h1 {
+      margin: 0;
+      font-size: 40px;
+      letter-spacing: 5px;
+    }
+    .oscars-header nav {
+      margin-top: 15px;
+    }
+    .oscars-header nav a {
+      margin: 0 20px;
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
+      border-bottom: 3px solid transparent;
+      padding-bottom: 5px;
+    }
+    .oscars-header nav a:hover,
+    .oscars-header nav a.active {
+      border-bottom: 3px solid yellow;
+    }
+    /* MoVie MaTRiX Navigation (from design.html) */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: var(--nav-bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .navbar h1 {
+      margin: 0;
+      color: var(--green-color);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .navbar ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar ul li {
+      margin: 0 15px;
+    }
+    .navbar ul li a,
+    .navbar button {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .navbar ul li a:hover,
+    .navbar button:hover {
+      color: var(--highlight-color);
+    }
+    .theme-toggle {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .sidebar {
+      width: 60px;
+      background: var(--nav-bg);
+      padding: 10px 0;
+      position: fixed;
+      top: 60px;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .sidebar a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.2rem;
+    }
+    .sidebar a:hover {
+      color: var(--highlight-color);
+    }
+    .main-container {
+      margin-left: 60px;
+      padding: 20px;
+      max-width: calc(100% - 60px);
+    }
+    /* Winners content sections */
+    .section {
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+    }
+    h1.section-title {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .movie-list, .actor-list, .director-list {
+      border: 1px solid #444;
+      border-radius: 5px;
+      background-color: var(--card-bg-start);
+      padding: 10px;
+    }
+    .movie, .actor, .director {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #444;
+    }
+    .movie:last-child, .actor:last-child, .director:last-child {
+      border-bottom: none;
+    }
+    .movie img, .actor img, .director img {
+      width: 60px;
+      height: 80px;
+      margin-right: 15px;
+      border-radius: 5px;
+    }
+    .movie-info, .actor-info, .director-info {
+      flex: 1;
+    }
+    .movie-title, .actor-name, .director-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0;
+    }
+    .movie-rating {
+      font-size: 14px;
+      color: #ccc;
+      margin: 5px 0;
+    }
+    .movie-names, .actor-movie, .director-movie {
+      font-size: 14px;
+      color: var(--highlight-color);
+    }
+    .winner {
+      background-color: #ffeb3b;
+      padding: 2px 5px;
+      font-size: 12px;
+      margin-left: 10px;
+      border-radius: 3px;
+    }
+    .star {
+      color: #f5c518;
+      margin-right: 5px;
+    }
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .back-to-top:hover {
+      background-color: #f0f0f0;
+    }
+    .back-to-top::before {
+      content: "↑";
+      margin-right: 5px;
+      font-size: 16px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: var(--nav-bg);
+      color: var(--text-color);
+    }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <nav class="navbar">
+      <h1>MoVie <span style="color: var(--text-color);">MaTRiX</span></h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#">Movies</a></li>
+        <li><a href="#">Series</a></li>
+        <li><a href="#">Popular</a></li>
+        <li><a href="#">Trends</a></li>
+        <li><a href="signup.html">Sign Up</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><button id="theme-toggle" class="theme-toggle">🌙</button></li>
+      </ul>
+    </nav>
+
+    <div class="oscars-header">
+        <h1>OSCARS</h1>
+        <nav>
+          <a href="oscar.html">OSCARS HOME</a>
+          <a href="winners.html" class="active">WINNERS</a>
+        </nav>
+      </div>
+
+
+  </header>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="filter.html" title="Search">🔍</a>
+    <a href="#" title="Home">🏠</a>
+    <a href="#" title="Community">👥</a>
+    <a href="#" title="TV Shows">📺</a>
+    <a href="watchlist.html" title="Watchlist">⏳</a>
+    <a href="streaming.html" title="Streaming">🛒</a>
+  </aside>
+  <!-- Main Content -->
+  <main class="main-container">
+    <div class="section">
+      <h1 class="section-title">Best Motion Picture of the Year</h1>
+      <div class="movie-list">
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1LH1sIoWp2mv2WmZehtZ20RRr4GblTRmR" alt="Anora">
+          <div class="movie-info">
+            <p class="movie-title">Anora <span class="winner">WINNER</span></p>
+            <p class="movie-rating"><span class="star">★</span> 7.6 (138K) Rate</p>
+            <p class="movie-names">Anya Coco • Samantha Quan • Sean Baker</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1Ut8O-PTjNju-pFIqUfPXrDQXDEi--56i" alt="Wicked">
+          <div class="movie-info">
+            <p class="movie-title">Wicked</p>
+            <p class="movie-rating"><span class="star">★</span> 7.5 (139K) Rate</p>
+            <p class="movie-names">Marc Platt</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1PyIL2PhBdPdmAgzwRNLo1ToOkAmjlWr2" alt="The Substance">
+          <div class="movie-info">
+            <p class="movie-title">The Substance</p>
+            <p class="movie-rating"><span class="star">★</span> 7.3 (174K) Rate</p>
+            <p class="movie-names">Coralie Fargeat</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h1 class="section-title">Best Performance by an Actor in a Leading Role</h1>
+      <div class="actor-list">
+        <div class="actor">
+          <img src="https://drive.google.com/thumbnail?id=1mxRtob-iS04tIxRjlrmoc6IXHJ0Ho7kv" alt="Adrien Brody">
+          <div class="actor-info">
+            <p class="actor-name">Adrien Brody <span class="winner">WINNER</span></p>
+            <p class="actor-movie">The Brutalist</p>
+          </div>
+        </div>
+        <div class="actor">
+          <img src="https://drive.google.com/thumbnail?id=1qkMMiIu01IJN8iVi51fJ0IK3fcd1wFqn" alt="Timothée Chalamet">
+          <div class="actor-info">
+            <p class="actor-name">Timothée Chalamet</p>
+            <p class="actor-movie">A Complete Unknown</p>
+          </div>
+        </div>
+        <div class="actor">
+          <img src="https://drive.google.com/thumbnail?id=1b0-ItJiCdND3TECCJMHkzi2AAyzeMa3H" alt="Ralph Fiennes">
+          <div class="actor-info">
+            <p class="actor-name">Ralph Fiennes</p>
+            <p class="actor-movie">Conclave</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h1 class="section-title">Best Achievement in Directing</h1>
+      <div class="director-list">
+        <div class="director">
+          <img src="https://drive.google.com/thumbnail?id=1V-rUuewMftBTj03VUu9KfixZK6O8agdd" alt="Sean Baker">
+          <div class="director-info">
+            <p class="director-name">Sean Baker <span class="winner">WINNER</span></p>
+            <p class="director-movie">Anora</p>
+          </div>
+        </div>
+        <div class="director">
+          <img src="https://drive.google.com/thumbnail?id=1cuk5A3MtOBW8Z5EMZFbbH6MMG8yJfJHx" alt="Brady Corbet">
+          <div class="director-info">
+            <p class="director-name">Brady Corbet</p>
+            <p class="director-movie">The Brutalist</p>
+          </div>
+        </div>
+        <div class="director">
+          <img src="https://drive.google.com/thumbnail?id=1NGUl0xyxbbqmbLJYbGl5bmlz_75dizYN" alt="Jacques Audiard">
+          <div class="director-info">
+            <p class="director-name">Jacques Audiard</p>
+            <p class="director-movie">Emilia Pérez</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h1 class="section-title">Best Original Screenplay</h1>
+      <div class="movie-list">
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1LH1sIoWp2mv2WmZehtZ20RRr4GblTRmR" alt="Best Original Screenplay">
+          <div class="movie-info">
+            <p class="movie-title">Anora <span class="winner">WINNER</span></p>
+            <p class="movie-rating"><span class="star">★</span> 7.6 (142K) Rate</p>
+            <p class="movie-names">Sean Baker</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=12yHjoPXC11Kni7vO6zIMpXqi5_vs9BAr" alt="The Brutalist">
+          <div class="movie-info">
+            <p class="movie-title">The Brutalist</p>
+            <p class="movie-rating"><span class="star">★</span> 7.5 (65K) Rate</p>
+            <p class="movie-names">Brady Corbet • Mona Fastvold</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1LTiIJcEIk8ynEE71zab30ffJMPxqO9Fg" alt="A Real Pain">
+          <div class="movie-info">
+            <p class="movie-title">A Real Pain</p>
+            <p class="movie-rating"><span class="star">★</span> 7.1 (73K) Rate</p>
+            <p class="movie-names">Jesse Eisenberg</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h1 class="section-title">Best Sound</h1>
+      <div class="movie-list">
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1Sho4pHkFtXdiofAWJ9hvgCnbN6BUhhiz" alt="Dune: Part Two">
+          <div class="movie-info">
+            <p class="movie-title">Dune: Part Two <span class="winner">WINNER</span></p>
+            <p class="movie-rating"><span class="star">★</span> 8.5 (611K) Rate</p>
+            <p class="movie-names">Gareth John • Ron Bartlett • Richard King • Doug Hemphill</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1wNs5wzUZLT92fSFyhNMuUyjFMH4zy3G7" alt="A Complete Unknown">
+          <div class="movie-info">
+            <p class="movie-title">A Complete Unknown</p>
+            <p class="movie-rating"><span class="star">★</span> 7.4 (57K) Rate</p>
+            <p class="movie-names">Tod A. Maitland • Ted Caplan • Donald Sylvester • Paul Massey • David Giammarco</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=15yQns3U3DHtlmE-aVlz0MyxaJMdp9-E6" alt="Emilia Pérez">
+          <div class="movie-info">
+            <p class="movie-title">Emilia Pérez</p>
+            <p class="movie-rating"><span class="star">★</span> 5.4 (83K) Rate</p>
+            <p class="movie-names">Erwan Kerzanet • Maxence Dussère • Aymeric Devoldère • Niels Barletta • Cyril Holtz</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h1 class="section-title">Best Achievement in Visual Effects</h1>
+      <div class="movie-list">
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1b0-ItJiCdND3TECCJMHkzi2AAyzeMa3H" alt="Dune: Part Two">
+          <div class="movie-info">
+            <p class="movie-title">Dune: Part Two <span class="winner">WINNER</span></p>
+            <p class="movie-rating"><span class="star">★</span> 8.5 (611K) Rate</p>
+            <p class="movie-names">Paul Lambert • Rhys Salcombe • Stephen James • Gerd Nefzer</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=12qF3y_hyGlk66nsdCxwjvRqq2toxx0Nt" alt="Alien: Romulus">
+          <div class="movie-info">
+            <p class="movie-title">Alien: Romulus</p>
+            <p class="movie-rating"><span class="star">★</span> 7.1 (237K) Rate</p>
+            <p class="movie-names">Eric Barba • Daniel Macarin • Nelson Sepulveda • Shane Mahan</p>
+          </div>
+        </div>
+        <div class="movie">
+          <img src="https://drive.google.com/thumbnail?id=1RnB4nAcImLMwfpNb2WoML_rJAN-rm5AT" alt="Better Man">
+          <div class="movie-info">
+            <p class="movie-title">Better Man</p>
+            <p class="movie-rating"><span class="star">★</span> 7.6 (22K) Rate</p>
+            <p class="movie-names">Luke Millar • Keith Herft • David Clayton • Peter Stubbs</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="back-to-top" onclick="scrollToTop()">Back to top</button>
+  </main>
+  <footer>
+    <p>© 2025 IMDb Recreation.</p>
+  </footer>
+  <script type="module">
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      themeToggle.textContent = document.body.classList.contains("light-mode") ? "☀️" : "🌙";
+    });
+  </script>
+  <script>
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
